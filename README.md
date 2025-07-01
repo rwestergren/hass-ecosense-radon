@@ -1,6 +1,6 @@
 # EcoSense Radon – Home Assistant Integration
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rwestergren&repository=https%3A%2F%2Fgithub.com%2Frwestergren%2Fhass-ecosense-radon&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rwestergren&repository=hass-ecosense-radon&category=integration)
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-blue.svg?style=flat-square)](https://hacs.xyz/) [![GitHub issues](https://img.shields.io/github/issues/rwestergren/hass-ecosense-radon?style=flat-square)](https://github.com/rwestergren/hass-ecosense-radon/issues)
 
