@@ -1,0 +1,25 @@
+[project]
+name = "ecosense-radon"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "rwestergren" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "homeassistant>=0.45.1",
+    "pycognito>=2024.5.1",
+    "requests>=2.32.4",
+]
+
+[project.scripts]
+ecosense-radon = "ecosense_radon:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.1",
+]

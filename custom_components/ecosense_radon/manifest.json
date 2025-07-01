@@ -1,0 +1,12 @@
+{
+  "domain": "ecosense_radon",
+  "name": "EcoSense Radon",
+  "config_flow": true,
+  "documentation": "https://github.com/rwestergren/hass-ecosense-radon",
+  "issue_tracker": "https://github.com/rwestergren/hass-ecosense-radon/issues",
+  "requirements": ["pycognito"],
+  "codeowners": ["@rwestergren"],
+  "version": "0.1.0",
+  "iot_class": "cloud_polling",
+  "icon": "mdi:radioactive"
+}
