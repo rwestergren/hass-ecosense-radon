@@ -8,9 +8,10 @@ This custom integration connects EcoSense cloud-connected radon monitors to Home
 
 ## Features
 
-- Radon Level sensor (`pCi/L`)
-- Alert Level sensor (Green / Orange / Red)
+- Radon Level sensor with configurable units (`pCi/L` or `Bq/m³`)
+- Alert Level sensor (Green / Orange / Red) with EPA-based thresholds
 - Device info and automatic cloud polling every 5 minutes
+- Unit configuration during setup and changeable via integration options
 
 ## Installation
 
@@ -23,7 +24,7 @@ This custom integration connects EcoSense cloud-connected radon monitors to Home
 ### **HACS (custom repository)**
 
 1. In HACS, go to **Integrations → Custom repositories** and add this repository URL as **Integration**.  
-2. Search for “EcoSense Radon” in HACS and install it.  
+2. Search for "EcoSense Radon" in HACS and install it.  
 3. Restart Home Assistant.
 
 ### **Manual**
@@ -35,13 +36,38 @@ Copy the `custom_components/ecosense_radon/` folder into your Home Assistant `cu
 1. Go to **Settings** > **Devices & Services** in Home Assistant.
 2. Click **Add Integration** and search for "EcoSense Radon".
 3. Enter your EcoSense cloud username and password when prompted.
+4. Select your preferred radon unit:
+   - **pCi/L** (Picocuries per Liter) - Default
+   - **Bq/m³** (Becquerels per Cubic Meter)
+
+### Changing Units After Setup
+
+You can change the radon unit at any time:
+1. Go to **Settings** > **Devices & Services**
+2. Find your EcoSense Radon integration
+3. Click **Configure**
+4. Select your preferred unit and click **Submit**
 
 ## Entities Created
 
-| Entity ID suffix | Description         | Unit   |
-|------------------|---------------------|--------|
-| `radon_level`    | Radon Level         | pCi/L  |
-| `alert_level`    | Alert Level (status)| —      |
+| Entity ID suffix | Description         | Unit          |
+|------------------|---------------------|---------------|
+| `radon_level`    | Radon Level         | pCi/L or Bq/m³|
+| `alert_level`    | Alert Level (status)| —             |
+
+## Alert Level Thresholds
+
+The alert level sensor uses EPA-recommended thresholds that automatically adjust based on your selected unit:
+
+### pCi/L (Picocuries per Liter)
+- **Green**: < 2.7 pCi/L
+- **Orange**: 2.7 - 4.0 pCi/L (EPA recommends considering mitigation)
+- **Red**: > 4.0 pCi/L (EPA recommends fixing your home)
+
+### Bq/m³ (Becquerels per Cubic Meter)
+- **Green**: < 100 Bq/m³
+- **Orange**: 100 - 150 Bq/m³ (EPA recommends considering mitigation)
+- **Red**: > 150 Bq/m³ (EPA recommends fixing your home)
 
 ## Known Limitations
 
