@@ -12,10 +12,19 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from .const import DOMAIN
-
-RADON_CONCENTRATION_PICOCURIES_PER_LITER = "pCi/L"
-RADON_UNIT_CONVERSION_SCALE = 37.0
+from .const import (
+    DOMAIN,
+    CONF_UNIT,
+    UNIT_PCIL,
+    UNIT_BQM3,
+    RADON_CONCENTRATION_BECQUERELS_PER_CUBIC_METER,
+    EPA_CONSIDER_FIXING_HOME,
+    EPA_RECOMMEND_FIXING_HOME,
+    EPA_CONSIDER_FIXING_HOME_BQ,
+    EPA_RECOMMEND_FIXING_HOME_BQ,
+    RADON_CONCENTRATION_PICOCURIES_PER_LITER,
+    RADON_UNIT_CONVERSION_SCALE,
+)
 
 SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
@@ -44,7 +53,7 @@ async def async_setup_entry(
         for device_data in coordinator.data:
             for description in SENSORS:
                 entities.append(
-                    EcoSenseRadonSensor(coordinator, device_data, description)
+                    EcoSenseRadonSensor(coordinator, device_data, description, entry)
                 )
 
     async_add_entities(entities)
@@ -58,11 +67,13 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
         coordinator: DataUpdateCoordinator,
         device_data: dict,
         description: SensorEntityDescription,
+        config_entry: ConfigEntry,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.entity_description = description
         self._serial_number = device_data["serial_number"]
+        self._config_entry = config_entry
 
         self._attr_unique_id = f"{self._serial_number}_{description.key}"
         self._attr_device_info = DeviceInfo(
@@ -72,6 +83,23 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
             model=device_data.get("device_name"),
             sw_version=device_data.get("fw_version"),
         )
+
+    @property
+    def _unit(self) -> int:
+        """Get the configured unit."""
+        # Check options first (for changes after setup), then data, then default
+        return self._config_entry.options.get(
+            CONF_UNIT, self._config_entry.data.get(CONF_UNIT, UNIT_PCIL)
+        )
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of measurement."""
+        if self.entity_description.key == "radon_level":
+            if self._unit == UNIT_BQM3:
+                return RADON_CONCENTRATION_BECQUERELS_PER_CUBIC_METER
+            return RADON_CONCENTRATION_PICOCURIES_PER_LITER
+        return self.entity_description.native_unit_of_measurement
 
     @property
     def icon(self):
@@ -138,22 +166,32 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
         if key == "radon_level":
             try:
                 value = device_data["radon_level"]
-                return round(float(value) / RADON_UNIT_CONVERSION_SCALE, 1)
+                if self._unit == UNIT_PCIL:
+                    return round(float(value) / RADON_UNIT_CONVERSION_SCALE, 1)
+                else:  # UNIT_BQM3
+                    return round(float(value), 1)
             except (KeyError, ValueError, TypeError):
                 return None
 
         if key == "alert_level":
             try:
                 radon_level = float(device_data["radon_level"])
-                config = device_data["config"]
-                level2 = float(config["level2"])
-                level3 = float(config["level3"])
+
+                # Convert to the appropriate unit for comparison
+                if self._unit == UNIT_PCIL:
+                    radon_level = radon_level / RADON_UNIT_CONVERSION_SCALE
+                    consider_threshold = EPA_CONSIDER_FIXING_HOME
+                    recommend_threshold = EPA_RECOMMEND_FIXING_HOME
+                else:  # UNIT_BQM3
+                    consider_threshold = EPA_CONSIDER_FIXING_HOME_BQ
+                    recommend_threshold = EPA_RECOMMEND_FIXING_HOME_BQ
+
             except (KeyError, TypeError, ValueError):
                 return None
 
-            if radon_level < level2:
+            if radon_level < consider_threshold:
                 return "Green"
-            if radon_level < level3:
+            if radon_level < recommend_threshold:
                 return "Orange"
             return "Red"
 
