@@ -165,17 +165,24 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
 
         if key == "radon_level":
             try:
-                value = device_data["radon_level"]
+                value = device_data.get("radon_level")
+                # Treat 0 or None as unavailable - device may be initializing
+                if not value:
+                    return None
                 if self._unit == UNIT_PCIL:
                     return round(float(value) / RADON_UNIT_CONVERSION_SCALE, 1)
                 else:  # UNIT_BQM3
                     return round(float(value), 1)
-            except (KeyError, ValueError, TypeError):
+            except (ValueError, TypeError):
                 return None
 
         if key == "alert_level":
             try:
-                radon_level = float(device_data["radon_level"])
+                radon_value = device_data.get("radon_level")
+                # Treat 0 or None as unavailable - device may be initializing
+                if not radon_value:
+                    return None
+                radon_level = float(radon_value)
 
                 # Convert to the appropriate unit for comparison
                 if self._unit == UNIT_PCIL:
@@ -186,7 +193,7 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
                     consider_threshold = EPA_CONSIDER_FIXING_HOME_BQ
                     recommend_threshold = EPA_RECOMMEND_FIXING_HOME_BQ
 
-            except (KeyError, TypeError, ValueError):
+            except (TypeError, ValueError):
                 return None
 
             if radon_level < consider_threshold:
