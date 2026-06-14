@@ -12,6 +12,7 @@ This custom integration connects EcoSense cloud-connected radon monitors to Home
 - Alert Level sensor (Green / Orange / Red) with EPA-based thresholds
 - Device info and automatic cloud polling every 5 minutes
 - Unit configuration during setup and changeable via integration options
+- Bundled brand icon/logo (light and dark variants) shown in the UI
 
 ## Installation
 
@@ -72,6 +73,12 @@ The alert level sensor uses EPA-recommended thresholds that automatically adjust
 ## Known Limitations
 
 - Requires EcoSense cloud account (no local/Bluetooth support)
+- The bundled integration icon/logo requires Home Assistant **2026.3** or newer,
+  which added support for local brand images in custom integrations
+  ([announcement](https://developers.home-assistant.io/blog/2026/02/24/brands-proxy-api)).
+  On older versions, the images are ignored and Home Assistant falls back to the
+  brands CDN (where this integration is not registered), so the generic
+  placeholder is shown.
 
 ## Troubleshooting
 
