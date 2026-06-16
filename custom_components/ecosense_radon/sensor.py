@@ -85,7 +85,7 @@ class EcoSenseRadonSensor(CoordinatorEntity, SensorEntity):
         )
 
     @property
-    def _unit(self) -> int:
+    def _unit(self) -> str:
         """Get the configured unit."""
         # Check options first (for changes after setup), then data, then default
         return self._config_entry.options.get(
