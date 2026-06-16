@@ -15,22 +15,43 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .api import EcoSenseApiClient
 from .const import DOMAIN, CONF_UNIT, UNIT_PCIL, UNIT_BQM3
 
 _LOGGER = logging.getLogger(__name__)
 
+
+def _unit_selector() -> SelectSelector:
+    """Build a select selector for the radon unit option.
+
+    String values are used so the value returned by the frontend (which is
+    always a string) validates correctly.
+    """
+    return SelectSelector(
+        SelectSelectorConfig(
+            options=[
+                SelectOptionDict(value=UNIT_PCIL, label="pCi/L (Picocuries per Liter)"),
+                SelectOptionDict(
+                    value=UNIT_BQM3, label="Bq/m³ (Becquerels per Cubic Meter)"
+                ),
+            ],
+            mode=SelectSelectorMode.DROPDOWN,
+        )
+    )
+
+
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
-        vol.Required(CONF_UNIT, default=UNIT_PCIL): vol.In(
-            {
-                UNIT_PCIL: "pCi/L (Picocuries per Liter)",
-                UNIT_BQM3: "Bq/m³ (Becquerels per Cubic Meter)",
-            }
-        ),
+        vol.Required(CONF_UNIT, default=UNIT_PCIL): _unit_selector(),
     }
 )
 
@@ -53,7 +74,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for EcoSense Radon."""
 
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -109,12 +130,7 @@ class OptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_UNIT, default=current_unit): vol.In(
-                        {
-                            UNIT_PCIL: "pCi/L (Picocuries per Liter)",
-                            UNIT_BQM3: "Bq/m³ (Becquerels per Cubic Meter)",
-                        }
-                    ),
+                    vol.Required(CONF_UNIT, default=current_unit): _unit_selector(),
                 }
             ),
         )

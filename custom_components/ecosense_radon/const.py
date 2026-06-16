@@ -16,8 +16,8 @@ CONF_PASSWORD = "password"
 UPDATE_INTERVAL = 5
 
 # Radon unit types
-UNIT_PCIL = 0
-UNIT_BQM3 = 1
+UNIT_PCIL = "pcil"
+UNIT_BQM3 = "bqm3"
 
 # Radon units
 RADON_CONCENTRATION_BECQUERELS_PER_CUBIC_METER = "Bq/m³"
