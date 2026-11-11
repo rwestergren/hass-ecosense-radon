@@ -70,6 +70,45 @@ The alert level sensor uses EPA-recommended thresholds that automatically adjust
 - **Orange**: 100 - 150 Bq/m³ (EPA recommends considering mitigation)
 - **Red**: > 150 Bq/m³ (EPA recommends fixing your home)
 
+## What to do if your level is Orange or Red
+
+Seeing an Orange or Red alert does not mean you need to panic — radon
+levels fluctuate with weather, ventilation, and the season. What matters
+most is your long-term average, so use the alert as a prompt to act,
+not as a single definitive verdict.
+
+**First, confirm the reading.**
+
+- Check your long-term average in Home Assistant (weeks, not a single
+  day). A short spike after a storm or a closed-up house is common.
+- If the average stays Orange or Red, confirm it with a second test:
+  a long-term test kit (90+ days) or a second continuous monitor placed
+  in the same room, ideally the lowest lived-in level of the home.
+
+**If your level is Orange (2.7–4.0 pCi/L / 100–150 Bq/m³):**
+
+- Increase ventilation: open windows regularly when weather allows and
+  make sure your home's existing ventilation is working as intended.
+- Seal obvious entry points — cracks in the foundation and basement
+  floor, gaps around pipes, and sump pits — to reduce radon entry.
+- Keep monitoring and retest in 3–6 months. If the average is still
+  Orange (or rising), start getting quotes for mitigation, especially
+  if anyone in the household spends long hours in the lowest level.
+
+**If your level is Red (> 4.0 pCi/L / > 150 Bq/m³):**
+
+- The EPA recommends fixing your home. The standard solution is an
+  active soil depressurization system (also called sub-slab
+  depressurization): a fan and pipe system that draws radon from
+  beneath the foundation and vents it safely outside.
+- Hire a certified radon mitigation professional to design and install
+  the system — sizing and sealing depend on your foundation type, so
+  this is not a typical DIY job.
+- After mitigation, keep the monitor running and retest to confirm the
+  system brought your long-term average down into the Green range.
+
+Further reading: [radon testing and mitigation costs](https://theradonlab.com/)
+
 ## Known Limitations
 
 - Requires EcoSense cloud account (no local/Bluetooth support)
@@ -95,3 +134,4 @@ logger:
 ## Contributing
 
 Pull requests are welcome! Please follow the code style enforced by `ruff`.
+
